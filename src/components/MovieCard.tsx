@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MovieCardProps } from '../types/types';
 import '../styles/MovieCard.css';
 
@@ -11,6 +11,11 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 		x: 0,
 		y: 0,
 	});
+
+	const [currentWindowDimensions, setCurrentWindowDimensions] = useState<{
+		width: number;
+		height: number;
+	}>({ width: window.innerWidth, height: window.innerHeight });
 
 	const movieCardRef = useRef<HTMLDivElement>(null);
 
@@ -44,9 +49,24 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 		if (movieCardRef.current) {
 			movieCardRef.current.style.transform = 'rotate(0deg)';
 		}
-		setMousePosition({ x: 700, y: 0 });
+		setMousePosition({ x: currentWindowDimensions.width / 2, y: 0 });
 		console.log(mousePosition);
 	};
+
+	const handleWindowResize = () => {
+		setCurrentWindowDimensions({
+			width: window.innerWidth,
+			height: window.innerHeight,
+		});
+	};
+
+	useEffect(() => {
+		window.addEventListener('resize', handleWindowResize);
+
+		return () => {
+			window.removeEventListener('resize', handleWindowResize);
+		};
+	}, []);
 
 	return (
 		<div
@@ -72,25 +92,33 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 						<p className="movie-summary">{summary}</p>
 					</div>
 					<div className="choice-wrapper">
-						<div
+						<button
+							onClick={() => console.log('accepted')}
 							className="accept"
 							style={{
-								color: mousePosition.x < 700 ? 'rgb(42, 233, 42)' : '#fff',
+								color:
+									mousePosition.x < currentWindowDimensions.width / 2 - 100
+										? 'rgb(42, 233, 42)'
+										: '#fff',
 							}}
 						>
 							<IoCheckmarkOutline size={25} />
 
 							<p>Accept</p>
-						</div>
-						<div
+						</button>
+						<button
+							onClick={() => console.log('rejected')}
 							className="reject"
 							style={{
-								color: mousePosition.x > 800 ? 'rgb(233, 42, 42)' : '#fff',
+								color:
+									mousePosition.x > currentWindowDimensions.width / 2 + 100
+										? 'rgb(233, 42, 42)'
+										: '#fff',
 							}}
 						>
-							<p> Reject</p>
+							<p>Reject</p>
 							<IoClose size={25} />
-						</div>
+						</button>
 					</div>
 				</div>
 			)}

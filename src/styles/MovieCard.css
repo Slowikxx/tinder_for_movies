@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+.movie-card-background {
+	width: 450px;
+	height: 600px;
+	border-radius: 25px;
+	background-size: cover;
+	background-repeat: no-repeat;
+	display: flex;
+	align-items: last baseline;
+	cursor: pointer;
+}
+
+.movie-info-wrapper {
+	width: 100%;
+	height: 150px;
+	display: flex;
+	flex-direction: column;
+	background-color: rgba(0, 0, 0, 0.7);
+	border-bottom-left-radius: 25px;
+	border-bottom-right-radius: 25px;
+	padding: 10px;
+}
+
+.movie-info {
+	height: 60px;
+	color: white;
+	padding: 0 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.movie-title {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 1.8rem;
+}
+
+.movie-rating {
+	font-weight: 600;
+	font-size: 1.4rem;
+}
+
+.movie-summary {
+	font-family: 'Rubik', sans-serif;
+	font-size: 0.8rem;
+	font-style: italic;
+}
+
+.choice-wrapper {
+	display: flex;
+	color: white;
+	flex: 1;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 20px;
+}
+
+.accept,
+.reject {
+	display: flex;
+	align-items: center;
+	font-family: 'Rubik', sans-serif;
+	font-weight: 500;
+	gap: 5px;
+}
+
+.accept:hover {
+	color: rgb(42, 233, 42);
+}
+
+.reject:hover {
+	color: rgb(233, 42, 42);
+}

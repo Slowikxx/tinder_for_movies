@@ -4,3 +4,11 @@ export type MovieCardProps = {
 	summary: string;
 	rating: number;
 };
+
+export type Movie = {
+	id: string;
+	title: string;
+	imageURL: string;
+	summary: string;
+	rating: number;
+};

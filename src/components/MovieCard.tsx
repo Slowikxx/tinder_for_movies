@@ -8,7 +8,7 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const [isDragging, setIsDragging] = useState<boolean>(false);
 	const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({
-		x: 0,
+		x: window.innerWidth / 2,
 		y: 0,
 	});
 

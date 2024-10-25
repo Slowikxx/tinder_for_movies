@@ -9,7 +9,7 @@
 	background-repeat: no-repeat;
 	display: flex;
 	align-items: last baseline;
-	cursor: pointer;
+	transition: transform 0.15s ease;
 }
 
 .movie-info-wrapper {
@@ -66,10 +66,9 @@
 	gap: 5px;
 }
 
-.accept:hover {
-	color: rgb(42, 233, 42);
-}
-
-.reject:hover {
-	color: rgb(233, 42, 42);
+@media only screen and (max-width: 600px) {
+	.movie-card-background {
+		width: 350px;
+		height: 500px;
+	}
 }

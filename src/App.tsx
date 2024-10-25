@@ -9,12 +9,27 @@ function App() {
 
 	const handleAccept = () => {
 		setCurrentMovieIndex((prev) => prev + 1);
-		console.log('Accepted');
+		setUsersDecisionInBackend(movies[currentMovieIndex].id, 'accept');
 	};
 
 	const handleReject = () => {
 		setCurrentMovieIndex((prev) => prev + 1);
-		console.log('Rejected');
+		setUsersDecisionInBackend(movies[currentMovieIndex].id, 'reject');
+	};
+
+	const setUsersDecisionInBackend = async (
+		movieId: string,
+		decision: string
+	) => {
+		try {
+			await fetch(`/recommendations/${movieId}/${decision}`, {
+				method: 'PUT',
+			});
+
+			console.log(`${decision}d movie with id ${movieId}`);
+		} catch (error) {
+			console.log('Error setting user decision in backend: ', error);
+		}
 	};
 
 	useEffect(() => {
@@ -47,13 +62,6 @@ function App() {
 			) : (
 				<h1>No more movies to display</h1>
 			)}
-
-			{/* <MovieCard
-				title="Star Wars"
-				summary="Lorem ipsum..."
-				image="https://images-na.ssl-images-amazon.com/images/M/MV5BOTAzODEzNDAzMl5BMl5BanBnXkFtZTgwMDU1MTgzNzE@._V1_SY1000_CR0,0,677,1000_AL_.jpg"
-				rating={8.2}
-			/> */}
 		</>
 	);
 }

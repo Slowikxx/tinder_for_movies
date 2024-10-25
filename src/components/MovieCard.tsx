@@ -4,7 +4,14 @@ import '../styles/MovieCard.css';
 
 import { IoClose, IoCheckmarkOutline } from 'react-icons/io5';
 
-const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
+const MovieCard = ({
+	title,
+	summary,
+	image,
+	rating,
+	onAccept,
+	onReject,
+}: MovieCardProps) => {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const [isDragging, setIsDragging] = useState<boolean>(false);
 	const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({
@@ -46,11 +53,17 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 
 	const handleMouseUp = () => {
 		setIsDragging(false);
-		if (movieCardRef.current) {
-			movieCardRef.current.style.transform = 'rotate(0deg)';
-		}
 		setMousePosition({ x: currentWindowDimensions.width / 2, y: 0 });
-		console.log(mousePosition);
+
+		if (mousePosition.x < currentWindowDimensions.width / 2 - 100) {
+			onAccept();
+		} else if (mousePosition.x > currentWindowDimensions.width / 2 + 100) {
+			onReject();
+		} else {
+			if (movieCardRef.current) {
+				movieCardRef.current.style.transform = 'rotate(0deg)';
+			}
+		}
 	};
 
 	const handleWindowResize = () => {
@@ -93,7 +106,7 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 					</div>
 					<div className="choice-wrapper">
 						<button
-							onClick={() => console.log('accepted')}
+							onClick={onAccept}
 							className="accept"
 							style={{
 								color:
@@ -107,7 +120,7 @@ const MovieCard = ({ title, summary, image, rating }: MovieCardProps) => {
 							<p>Accept</p>
 						</button>
 						<button
-							onClick={() => console.log('rejected')}
+							onClick={onReject}
 							className="reject"
 							style={{
 								color:

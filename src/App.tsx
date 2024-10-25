@@ -5,6 +5,18 @@ import { Movie } from './types/types';
 function App() {
 	const [movies, setMovies] = useState<Array<Movie>>([]);
 
+	const [currentMovieIndex, setCurrentMovieIndex] = useState<number>(0);
+
+	const handleAccept = () => {
+		setCurrentMovieIndex((prev) => prev + 1);
+		console.log('Accepted');
+	};
+
+	const handleReject = () => {
+		setCurrentMovieIndex((prev) => prev + 1);
+		console.log('Rejected');
+	};
+
 	useEffect(() => {
 		const fetchMovies = async () => {
 			try {
@@ -22,15 +34,19 @@ function App() {
 
 	return (
 		<>
-			{movies.map((movie) => (
+			{movies.length > 0 && currentMovieIndex < movies.length ? (
 				<MovieCard
-					key={movie.id}
-					title={movie.title}
-					summary={movie.summary}
-					image={movie.imageURL}
-					rating={movie.rating}
+					key={movies[currentMovieIndex].id}
+					title={movies[currentMovieIndex].title}
+					summary={movies[currentMovieIndex].summary}
+					image={movies[currentMovieIndex].imageURL}
+					rating={movies[currentMovieIndex].rating}
+					onAccept={handleAccept}
+					onReject={handleReject}
 				/>
-			))}
+			) : (
+				<h1>No more movies to display</h1>
+			)}
 
 			{/* <MovieCard
 				title="Star Wars"

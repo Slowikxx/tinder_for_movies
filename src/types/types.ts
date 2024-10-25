@@ -3,6 +3,8 @@ export type MovieCardProps = {
 	image: string;
 	summary: string;
 	rating: number;
+	onAccept: () => void;
+	onReject: () => void;
 };
 
 export type Movie = {

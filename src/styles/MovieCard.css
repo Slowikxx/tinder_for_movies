@@ -24,7 +24,7 @@
 }
 
 .movie-info {
-	height: 60px;
+	min-height: 60px;
 	color: white;
 	padding: 0 10px;
 	display: flex;
@@ -83,5 +83,21 @@
 	.movie-card-background {
 		width: 350px;
 		height: 500px;
+	}
+
+	.movie-title {
+		font-size: 1.2rem;
+	}
+
+	.movie-rating {
+		font-size: 1rem;
+	}
+
+	.movie-summary {
+		font-size: 0.8rem;
+	}
+
+	.movie-info {
+		min-height: 60px;
 	}
 }

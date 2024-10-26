@@ -38,7 +38,7 @@ const MovieCard = ({
 			if (movieCardRef.current) {
 				const movieCardRect = movieCardRef.current.getBoundingClientRect();
 				const movieCardCenterX = movieCardRect.left + movieCardRect.width / 2;
-				const rotateAngle = (event.clientX - movieCardCenterX) / 20;
+				const rotateAngle = (event.clientX - movieCardCenterX) / 10;
 				movieCardRef.current.style.transform = `rotate(${rotateAngle}deg)`;
 			}
 		}
@@ -115,6 +115,10 @@ const MovieCard = ({
 									mousePosition.x < currentWindowDimensions.width / 2 - 100
 										? 'rgb(42, 233, 42)'
 										: '#fff',
+								fontSize:
+									mousePosition.x < currentWindowDimensions.width / 2 - 100
+										? '1.2rem'
+										: '0.8rem',
 							}}
 						>
 							<IoCheckmarkOutline size={25} />
@@ -129,6 +133,10 @@ const MovieCard = ({
 									mousePosition.x > currentWindowDimensions.width / 2 + 100
 										? 'rgb(233, 42, 42)'
 										: '#fff',
+								fontSize:
+									mousePosition.x > currentWindowDimensions.width / 2 + 100
+										? '1.2rem'
+										: '0.8rem',
 							}}
 						>
 							<p>Reject</p>

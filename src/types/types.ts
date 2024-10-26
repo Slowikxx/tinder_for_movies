@@ -18,3 +18,10 @@ export type Movie = {
 export type MoviesContextType = {
 	movies: Array<Movie>;
 };
+
+export type ChoiceButtonProps = {
+	onClick: () => void;
+	mousePosition: boolean;
+	color: string;
+	type: string;
+};

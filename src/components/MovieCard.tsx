@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { MovieCardProps } from '../types/types';
 import '../styles/MovieCard.css';
 
-import { IoClose, IoCheckmarkOutline } from 'react-icons/io5';
+import ChoiceButton from './ChoiceButton';
 
 const MovieCard = ({
 	title,
@@ -18,7 +18,6 @@ const MovieCard = ({
 		x: window.innerWidth / 2,
 		y: 0,
 	});
-
 	const [currentWindowDimensions, setCurrentWindowDimensions] = useState<{
 		width: number;
 		height: number;
@@ -94,7 +93,6 @@ const MovieCard = ({
 			className="movie-card-background"
 			style={{
 				backgroundImage: `url(${image})`,
-				objectFit: 'contain',
 				cursor: isDragging ? 'grabbing' : 'grab',
 			}}
 		>
@@ -107,41 +105,22 @@ const MovieCard = ({
 						<p className="movie-summary">{summary}</p>
 					</div>
 					<div className="choice-wrapper">
-						<button
+						<ChoiceButton
 							onClick={onAccept}
-							className="accept"
-							style={{
-								color:
-									mousePosition.x < currentWindowDimensions.width / 2 - 100
-										? 'rgb(42, 233, 42)'
-										: '#fff',
-								fontSize:
-									mousePosition.x < currentWindowDimensions.width / 2 - 100
-										? '1.2rem'
-										: '0.8rem',
-							}}
-						>
-							<IoCheckmarkOutline size={25} />
-
-							<p>Accept</p>
-						</button>
-						<button
+							mousePosition={
+								mousePosition.x < currentWindowDimensions.width / 2 - 100
+							}
+							color="rgb(42, 233, 42)"
+							type="Accept"
+						/>
+						<ChoiceButton
 							onClick={onReject}
-							className="reject"
-							style={{
-								color:
-									mousePosition.x > currentWindowDimensions.width / 2 + 100
-										? 'rgb(233, 42, 42)'
-										: '#fff',
-								fontSize:
-									mousePosition.x > currentWindowDimensions.width / 2 + 100
-										? '1.2rem'
-										: '0.8rem',
-							}}
-						>
-							<p>Reject</p>
-							<IoClose size={25} />
-						</button>
+							mousePosition={
+								mousePosition.x > currentWindowDimensions.width / 2 + 100
+							}
+							color="rgb(233, 42, 42)"
+							type="Reject"
+						/>
 					</div>
 				</div>
 			)}

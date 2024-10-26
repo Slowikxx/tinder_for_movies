@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import MovieCard from './components/MovieCard';
-import { Movie } from './types/types';
+import { useMovies } from './providers/MoviesProvider';
 
 function App() {
-	const [movies, setMovies] = useState<Array<Movie>>([]);
+	const { movies } = useMovies();
 
 	const [currentMovieIndex, setCurrentMovieIndex] = useState<number>(0);
 
@@ -32,21 +32,6 @@ function App() {
 		}
 	};
 
-	useEffect(() => {
-		const fetchMovies = async () => {
-			try {
-				const response = await fetch('/data/recommendations.json');
-				const data = await response.json();
-				setMovies(data);
-				console.log(movies);
-			} catch (error) {
-				console.error('Error fetching movies: ', error);
-			}
-		};
-
-		fetchMovies();
-	}, []);
-
 	return (
 		<>
 			{movies.length > 0 && currentMovieIndex < movies.length ? (
@@ -60,7 +45,7 @@ function App() {
 					onReject={handleReject}
 				/>
 			) : (
-				<h1>No more movies to display</h1>
+				<h1 className="no-movies-text">No more movies to display...</h1>
 			)}
 		</>
 	);

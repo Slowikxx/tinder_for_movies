@@ -14,3 +14,7 @@ export type Movie = {
 	summary: string;
 	rating: number;
 };
+
+export type MoviesContextType = {
+	movies: Array<Movie>;
+};

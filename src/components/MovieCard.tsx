@@ -46,6 +46,8 @@ const MovieCard = ({
 
 	const handleMouseLeave = () => {
 		setIsHovered(false);
+		setIsDragging(false);
+		setMousePosition({ x: currentWindowDimensions.width / 2, y: 0 });
 		if (movieCardRef.current) {
 			movieCardRef.current.style.transform = 'rotate(0deg)';
 		}

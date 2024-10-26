@@ -5,6 +5,7 @@ import { ChoiceButtonProps } from '../types/types';
 const ChoiceButton = ({
 	onClick,
 	mousePosition,
+	touchPosition,
 	color,
 	type,
 }: ChoiceButtonProps) => {
@@ -13,8 +14,8 @@ const ChoiceButton = ({
 			onClick={onClick}
 			className="choice-button"
 			style={{
-				color: mousePosition ? color : '#fff',
-				fontSize: mousePosition ? '1.2rem' : '0.8rem',
+				color: mousePosition || touchPosition ? color : '#fff',
+				fontSize: mousePosition || touchPosition ? '1.2rem' : '0.8rem',
 			}}
 		>
 			{type === 'Accept' ? (

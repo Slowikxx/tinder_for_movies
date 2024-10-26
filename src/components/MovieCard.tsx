@@ -18,6 +18,12 @@ const MovieCard = ({
 		x: window.innerWidth / 2,
 		y: 0,
 	});
+
+	const [touchPosition, setTouchPosition] = useState<{ x: number; y: number }>({
+		x: window.innerWidth / 2,
+		y: 0,
+	});
+
 	const [currentWindowDimensions, setCurrentWindowDimensions] = useState<{
 		width: number;
 		height: number;
@@ -67,6 +73,42 @@ const MovieCard = ({
 		}
 	};
 
+	const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+		setTouchPosition({
+			x: event.touches[0].clientX,
+			y: event.touches[0].clientY,
+		});
+		setIsDragging(true);
+		setIsHovered(true);
+	};
+
+	const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
+		if (isDragging && movieCardRef.current) {
+			const touchX = event.touches[0].clientX;
+			const movieCardRect = movieCardRef.current.getBoundingClientRect();
+			const movieCardCenterX = movieCardRect.left + movieCardRect.width / 2;
+			const rotateAngle = (touchX - movieCardCenterX) / 10;
+			movieCardRef.current.style.transform = `rotate(${rotateAngle}deg)`;
+
+			setTouchPosition({ x: touchX, y: event.touches[0].clientY });
+		}
+	};
+
+	const handleTouchEnd = () => {
+		setIsDragging(false);
+		setTouchPosition({ x: currentWindowDimensions.width / 2, y: 0 });
+
+		if (touchPosition.x < currentWindowDimensions.width / 2 - 50) {
+			onAccept();
+		} else if (touchPosition.x > currentWindowDimensions.width / 2 + 50) {
+			onReject();
+		} else {
+			if (movieCardRef.current) {
+				movieCardRef.current.style.transform = 'rotate(0deg)';
+			}
+		}
+	};
+
 	const handleWindowResize = () => {
 		setCurrentWindowDimensions({
 			width: window.innerWidth,
@@ -90,6 +132,9 @@ const MovieCard = ({
 			onMouseDown={handleMouseDown}
 			onMouseMove={handleMouseMovement}
 			onMouseUp={handleMouseUp}
+			onTouchStart={handleTouchStart}
+			onTouchMove={handleTouchMove}
+			onTouchEnd={handleTouchEnd}
 			className="movie-card-background"
 			style={{
 				backgroundImage: `url(${image})`,
@@ -110,6 +155,9 @@ const MovieCard = ({
 							mousePosition={
 								mousePosition.x < currentWindowDimensions.width / 2 - 100
 							}
+							touchPosition={
+								touchPosition.x < currentWindowDimensions.width / 2 - 50
+							}
 							color="rgb(42, 233, 42)"
 							type="Accept"
 						/>
@@ -117,6 +165,9 @@ const MovieCard = ({
 							onClick={onReject}
 							mousePosition={
 								mousePosition.x > currentWindowDimensions.width / 2 + 100
+							}
+							touchPosition={
+								touchPosition.x > currentWindowDimensions.width / 2 + 50
 							}
 							color="rgb(233, 42, 42)"
 							type="Reject"

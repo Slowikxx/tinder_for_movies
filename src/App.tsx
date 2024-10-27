@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import MovieCard from './components/MovieCard';
-import { useMovies } from './providers/MoviesProvider';
+// import { useMovies } from './providers/MoviesProvider';
 import { movies } from './data';
 
 function App() {

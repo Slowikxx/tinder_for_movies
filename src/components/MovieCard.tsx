@@ -9,6 +9,7 @@ const getWindowSize = () => ({
 });
 
 const MovieCard = ({
+	id,
 	title,
 	summary,
 	image,
@@ -83,7 +84,7 @@ const MovieCard = ({
 
 	return (
 		<div
-			data-testid="movie-card"
+			data-testid={`movie-card-${id}`}
 			ref={movieCardRef}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => {

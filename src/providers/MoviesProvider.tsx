@@ -15,10 +15,10 @@ export default function MoviesProvider({ children }: PropsWithChildren) {
 	useEffect(() => {
 		const fetchMovies = async () => {
 			try {
-				const response = await fetch('/data/recommendations.json');
+				// const response = await fetch('/data/recommendations.json');
+				const response = await fetch('http://localhost:8080/recommendations');
 				const data = await response.json();
 				setMovies(data);
-				console.log(movies);
 			} catch (error) {
 				console.error('Error fetching movies: ', error);
 			}

@@ -22,9 +22,16 @@ function App() {
 		decision: string
 	) => {
 		try {
-			await fetch(`/recommendations/${movieId}/${decision}`, {
-				method: 'PUT',
-			});
+			const response = await fetch(
+				`http://localhost:8080/recommendations/${movieId}/${decision}`,
+				{
+					method: 'PUT',
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error('Error setting user decision in backend');
+			}
 
 			console.log(`${decision}d movie with id ${movieId}`);
 		} catch (error) {
@@ -37,6 +44,7 @@ function App() {
 			{movies.length > 0 && currentMovieIndex < movies.length ? (
 				<MovieCard
 					key={movies[currentMovieIndex].id}
+					id={movies[currentMovieIndex].id}
 					title={movies[currentMovieIndex].title}
 					summary={movies[currentMovieIndex].summary}
 					image={movies[currentMovieIndex].imageURL}

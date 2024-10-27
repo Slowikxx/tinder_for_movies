@@ -1,4 +1,5 @@
 export type MovieCardProps = {
+	id: string;
 	title: string;
 	image: string;
 	summary: string;

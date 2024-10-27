@@ -27,18 +27,6 @@ node index.js
 ```
 to run the backend server on port 8080  _(port can be changed by changing PORT_NUMBER variable value in the index.js file)_
 
-For the app to work on the github pages withouth deploying backend I commented the code parts that fetch the data from backend and instead added fetching static data from an array inside of the **data** folder.
-
-After running the server for the fetching to work properly again go to **App.tsx** file from the frontend tinder_for_movies repository, uncomment these lines:
-```js
-// import { useMovies } from './providers/MoviesProvider';
-// const { movies } = useMovies();
-```
-and comment or get rid of this line:
-```js
-import { movies } from './data';
-```
-
 After completing these steps the app should work locally on your machine.
 
 ## Answers to Additional Questions:

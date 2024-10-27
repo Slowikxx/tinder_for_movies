@@ -83,6 +83,7 @@ const MovieCard = ({
 
 	return (
 		<div
+			data-testid="movie-card"
 			ref={movieCardRef}
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => {

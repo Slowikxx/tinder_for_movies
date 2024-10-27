@@ -1,8 +1,12 @@
+import '../styles/MovieCard.css';
 import { useState, useEffect, useRef } from 'react';
 import { MovieCardProps } from '../types/types';
-import '../styles/MovieCard.css';
-
 import ChoiceButton from './ChoiceButton';
+
+const getWindowSize = () => ({
+	width: window.innerWidth,
+	height: window.innerHeight,
+});
 
 const MovieCard = ({
 	title,
@@ -14,109 +18,62 @@ const MovieCard = ({
 }: MovieCardProps) => {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const [isDragging, setIsDragging] = useState<boolean>(false);
-	const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({
-		x: window.innerWidth / 2,
-		y: 0,
-	});
 
-	const [touchPosition, setTouchPosition] = useState<{ x: number; y: number }>({
-		x: window.innerWidth / 2,
-		y: 0,
-	});
-
-	const [currentWindowDimensions, setCurrentWindowDimensions] = useState<{
+	const [cardRotationAngle, setCardRotationAngle] = useState<number>(0);
+	const [interactionPosition, setInteractionPosition] = useState<{
+		x: number;
+		y: number;
+	}>({ x: getWindowSize().width / 2, y: 0 });
+	const [currentWindowSize, setCurrentWindowSize] = useState<{
 		width: number;
 		height: number;
-	}>({ width: window.innerWidth, height: window.innerHeight });
+	}>(getWindowSize());
 
 	const movieCardRef = useRef<HTMLDivElement>(null);
 
-	const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
-		setIsDragging(true);
-		setMousePosition({ x: event.clientX, y: event.clientY });
-	};
-
-	const handleMouseMovement = (event: React.MouseEvent<HTMLDivElement>) => {
-		if (isDragging) {
-			setMousePosition({ x: event.clientX, y: event.clientY });
-
-			if (movieCardRef.current) {
-				const movieCardRect = movieCardRef.current.getBoundingClientRect();
-				const movieCardCenterX = movieCardRect.left + movieCardRect.width / 2;
-				const rotateAngle = (event.clientX - movieCardCenterX) / 10;
-				movieCardRef.current.style.transform = `rotate(${rotateAngle}deg)`;
-			}
-		}
-	};
-
-	const handleMouseLeave = () => {
-		setIsHovered(false);
+	const resetInteractionPosition = () => {
 		setIsDragging(false);
-		setMousePosition({ x: currentWindowDimensions.width / 2, y: 0 });
+		setInteractionPosition({ x: currentWindowSize.width / 2, y: 0 });
+		setCardRotationAngle(0);
+	};
+
+	const handleCardDrag = (x: number) => {
 		if (movieCardRef.current) {
-			movieCardRef.current.style.transform = 'rotate(0deg)';
+			const cardCenterX =
+				movieCardRef.current.getBoundingClientRect().left +
+				movieCardRef.current.getBoundingClientRect().width / 2;
+			const rotationAngle = (x - cardCenterX) / 10;
+			setCardRotationAngle(rotationAngle);
 		}
 	};
 
-	const handleMouseUp = () => {
-		setIsDragging(false);
-		setMousePosition({ x: currentWindowDimensions.width / 2, y: 0 });
-
-		if (mousePosition.x < currentWindowDimensions.width / 2 - 100) {
+	const handleInteractionEnd = () => {
+		if (interactionPosition.x < currentWindowSize.width / 2 - 100) {
 			onAccept();
-		} else if (mousePosition.x > currentWindowDimensions.width / 2 + 100) {
+		} else if (interactionPosition.x > currentWindowSize.width / 2 + 100) {
 			onReject();
-		} else {
-			if (movieCardRef.current) {
-				movieCardRef.current.style.transform = 'rotate(0deg)';
-			}
 		}
+
+		resetInteractionPosition();
 	};
 
-	const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
-		setTouchPosition({
-			x: event.touches[0].clientX,
-			y: event.touches[0].clientY,
-		});
+	const handleInteractionStart = (x: number, y: number) => {
 		setIsDragging(true);
 		setIsHovered(true);
+		setInteractionPosition({ x, y });
 	};
 
-	const handleTouchMove = (event: React.TouchEvent<HTMLDivElement>) => {
-		if (isDragging && movieCardRef.current) {
-			const touchX = event.touches[0].clientX;
-			const movieCardRect = movieCardRef.current.getBoundingClientRect();
-			const movieCardCenterX = movieCardRect.left + movieCardRect.width / 2;
-			const rotateAngle = (touchX - movieCardCenterX) / 10;
-			movieCardRef.current.style.transform = `rotate(${rotateAngle}deg)`;
-
-			setTouchPosition({ x: touchX, y: event.touches[0].clientY });
+	const hadleInteractionMove = (x: number, y: number) => {
+		if (isDragging) {
+			setInteractionPosition({ x, y });
+			handleCardDrag(x);
 		}
-	};
-
-	const handleTouchEnd = () => {
-		setIsDragging(false);
-		setTouchPosition({ x: currentWindowDimensions.width / 2, y: 0 });
-
-		if (touchPosition.x < currentWindowDimensions.width / 2 - 50) {
-			onAccept();
-		} else if (touchPosition.x > currentWindowDimensions.width / 2 + 50) {
-			onReject();
-		} else {
-			if (movieCardRef.current) {
-				movieCardRef.current.style.transform = 'rotate(0deg)';
-			}
-		}
-	};
-
-	const handleWindowResize = () => {
-		setCurrentWindowDimensions({
-			width: window.innerWidth,
-			height: window.innerHeight,
-		});
 	};
 
 	useEffect(() => {
+		const handleWindowResize = () => {
+			setCurrentWindowSize(getWindowSize());
+		};
 		window.addEventListener('resize', handleWindowResize);
 
 		return () => {
@@ -128,17 +85,25 @@ const MovieCard = ({
 		<div
 			ref={movieCardRef}
 			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={handleMouseLeave}
-			onMouseDown={handleMouseDown}
-			onMouseMove={handleMouseMovement}
-			onMouseUp={handleMouseUp}
-			onTouchStart={handleTouchStart}
-			onTouchMove={handleTouchMove}
-			onTouchEnd={handleTouchEnd}
+			onMouseLeave={() => {
+				setIsHovered(false);
+				resetInteractionPosition();
+			}}
+			onMouseDown={(e) => handleInteractionStart(e.clientX, e.clientY)}
+			onMouseMove={(e) => hadleInteractionMove(e.clientX, e.clientY)}
+			onMouseUp={handleInteractionEnd}
+			onTouchStart={(e) =>
+				handleInteractionStart(e.touches[0].clientX, e.touches[0].clientY)
+			}
+			onTouchMove={(e) =>
+				hadleInteractionMove(e.touches[0].clientX, e.touches[0].clientY)
+			}
+			onTouchEnd={handleInteractionEnd}
 			className="movie-card-background"
 			style={{
 				backgroundImage: `url(${image})`,
 				cursor: isDragging ? 'grabbing' : 'grab',
+				transform: `rotate(${cardRotationAngle}deg)`,
 			}}
 		>
 			{isHovered && (
@@ -152,22 +117,16 @@ const MovieCard = ({
 					<div className="choice-wrapper">
 						<ChoiceButton
 							onClick={onAccept}
-							mousePosition={
-								mousePosition.x < currentWindowDimensions.width / 2 - 100
-							}
-							touchPosition={
-								touchPosition.x < currentWindowDimensions.width / 2 - 50
+							interactionPosition={
+								interactionPosition.x < currentWindowSize.width / 2 - 100
 							}
 							color="rgb(42, 233, 42)"
 							type="Accept"
 						/>
 						<ChoiceButton
 							onClick={onReject}
-							mousePosition={
-								mousePosition.x > currentWindowDimensions.width / 2 + 100
-							}
-							touchPosition={
-								touchPosition.x > currentWindowDimensions.width / 2 + 50
+							interactionPosition={
+								interactionPosition.x > currentWindowSize.width / 2 + 100
 							}
 							color="rgb(233, 42, 42)"
 							type="Reject"

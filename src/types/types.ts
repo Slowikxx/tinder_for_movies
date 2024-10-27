@@ -21,8 +21,7 @@ export type MoviesContextType = {
 
 export type ChoiceButtonProps = {
 	onClick: () => void;
-	mousePosition: boolean;
-	touchPosition: boolean;
+	interactionPosition: boolean;
 	color: string;
 	type: string;
 };

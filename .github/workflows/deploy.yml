@@ -23,6 +23,23 @@ jobs:
       - name: Run Tests
         run: npm run test
 
+  lint:
+    name: Run Eslint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+
+      - name: Run esint
+        run: npm run lint
+
   build:
     name: Build
     runs-on: ubuntu-latest

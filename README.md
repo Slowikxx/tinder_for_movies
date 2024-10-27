@@ -1,50 +1,66 @@
-# React + TypeScript + Vite
+# Tinder for Movies - recruitment task for Rumble Fish
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This app allows users to either accept or reject a movie recommendation. To accept a recommendation, the user swipes the movie card to the left; to reject it, they swipe it to the right (or click on the appropriate button)
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To run the code locally first clone this github repository. Inside code editor run
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
+```
+and then
+```bash
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Using backend for this application
+Additionally I prepared a mock backend for this application which you can find following this [link](https://github.com/Slowikxx/backend_tinder_for_movies).
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+After cloning the backend repository and running 
+```bash
+npm install
 ```
+run
+```bash
+node index.js
+```
+to run the backend server on port 8080  _(port can be changed by changing PORT_NUMBER variable value in the index.js file)_
+
+For the app to work on the github pages withouth deploying backend I commented the code parts that fetch the data from backend and instead added fetching static data from an array inside of the **data** folder.
+
+After running the server for the fetching to work properly again go to **App.tsx** file from the frontend tinder_for_movies repository, uncomment these lines:
+```js
+// import { useMovies } from './providers/MoviesProvider';
+// const { movies } = useMovies();
+```
+and comment or get rid of this line:
+```js
+import { movies } from './data';
+```
+
+After completing these steps the app should work locally on your machine.
+
+## Answers to Additional Questions:
+
+1. **Usage of Context Provider to Decouple Data Fetching from Presentation Layer**:  
+   I created a `MoviesProvider` component that handles data fetching from the backend. By using React's context hook, `App.tsx` can easily access the fetched movies, keeping data management separate from the presentation layer.
+
+2. **Testing the Logic for Data Fetching**:  
+   I used Postman Agent to test data-fetching logic. By creating GET and PUT requests, I verified the responses that the browser would receive when making these API calls, ensuring that data fetching worked as expected.
+
+   - **Successful call to the GET endpoint, retrieved all movies**:  
+     ![SUCCESSFUL_GET](https://github.com/user-attachments/assets/3319d3f4-29c9-4b99-8759-fdbe9b62fb29)
+
+   - **Successful call to the PUT endpoint, accepted a movie**:  
+     ![SUCCESSFUL_ACCEPT](https://github.com/user-attachments/assets/ac3427b6-58e7-4c4b-8434-922136e69ab9)
+
+   - **Successful call to the PUT endpoint, rejected a movie**:  
+     ![SUCCESSFUL_REJECT](https://github.com/user-attachments/assets/a750ee38-2aea-4026-9f76-b7d025c5d80f)
+
+   - **Updated status of the data after rejecting**:  
+     ![status_updated_after_put_call](https://github.com/user-attachments/assets/0cc82829-1949-4b4b-b012-7aa460a14056)
+
+   - **404 Not Found response after providing a non-existent movie ID**:  
+     - ![NOT_FOUND_ACCEPT](https://github.com/user-attachments/assets/1e38703e-e755-452b-b532-87e1433d7606)
+     - ![NOT_FOUND_REJECTED](https://github.com/user-attachments/assets/01ff9a09-378d-4157-8e99-94b6e01a4eb8)

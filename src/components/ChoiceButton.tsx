@@ -9,6 +9,7 @@ const ChoiceButton = ({
 }: ChoiceButtonProps) => {
 	return (
 		<button
+			data-testid="choice-button"
 			onClick={onClick}
 			className="choice-button"
 			style={{

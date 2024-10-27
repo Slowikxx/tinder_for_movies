@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import MovieCard from './components/MovieCard';
-// import { useMovies } from './providers/MoviesProvider';
-import { movies } from './data';
+import { useMovies } from './providers/MoviesProvider';
+import { localMovies } from './data';
 
 function App() {
-	// const { movies } = useMovies();
+	const { movies } = useMovies();
 
 	const [currentMovieIndex, setCurrentMovieIndex] = useState<number>(0);
 
@@ -40,16 +40,23 @@ function App() {
 		}
 	};
 
+	const getCurrentMovie = () => {
+		const currentMovies = movies.length > 0 ? movies : localMovies;
+
+		return currentMovies[currentMovieIndex] || null;
+	};
+
 	return (
 		<>
-			{movies.length > 0 && currentMovieIndex < movies.length ? (
+			{currentMovieIndex <
+			(movies.length > 0 ? movies.length : localMovies.length) ? (
 				<MovieCard
-					key={movies[currentMovieIndex].id}
-					id={movies[currentMovieIndex].id}
-					title={movies[currentMovieIndex].title}
-					summary={movies[currentMovieIndex].summary}
-					image={movies[currentMovieIndex].imageURL}
-					rating={movies[currentMovieIndex].rating}
+					key={getCurrentMovie().id}
+					id={getCurrentMovie().id}
+					title={getCurrentMovie().title}
+					summary={getCurrentMovie().summary}
+					image={getCurrentMovie().imageURL}
+					rating={getCurrentMovie().rating}
 					onAccept={handleAccept}
 					onReject={handleReject}
 				/>

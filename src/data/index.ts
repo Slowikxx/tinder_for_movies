@@ -1,4 +1,4 @@
-export const movies = [
+export const localMovies = [
 	{
 		id: '1and3011',
 		imageURL:

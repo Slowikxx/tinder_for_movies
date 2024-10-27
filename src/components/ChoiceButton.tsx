@@ -1,4 +1,3 @@
-import React from 'react';
 import { IoCheckmarkOutline, IoClose } from 'react-icons/io5';
 import { ChoiceButtonProps } from '../types/types';
 

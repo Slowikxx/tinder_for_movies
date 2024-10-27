@@ -1,32 +1,27 @@
-// App.test.tsx
-import { render, cleanup } from '@testing-library/react';
+import { render, cleanup, screen } from '@testing-library/react';
 import App from '../../App';
-import MoviesProvider from '../../providers/MoviesProvider';
+import { useMovies } from '../../providers/MoviesProvider';
 
 import '@testing-library/jest-dom';
+
+jest.mock('../../providers/MoviesProvider', () => ({
+	useMovies: jest.fn(),
+}));
+
+jest.mock('../../data', () => ({
+	localMovies: [],
+}));
 
 afterEach(() => {
 	cleanup();
 });
 
 test('displays message when there are no movies left', async () => {
-	jest.mock('../../providers/MoviesProvider.tsx', () => ({
-		useMovies: () => ({
-			movies: [],
-		}),
-	}));
+	(useMovies as jest.Mock).mockReturnValue({
+		movies: [],
+	});
 
-	global.fetch = jest.fn(() =>
-		Promise.resolve({
-			json: jest.fn(),
-		})
-	) as jest.Mock;
+	render(<App />);
 
-	const { getByText } = render(
-		<MoviesProvider>
-			<App />
-		</MoviesProvider>
-	);
-
-	expect(getByText('No more movies to display...')).toBeInTheDocument();
+	expect(screen.getByText('No more movies to display...')).toBeInTheDocument();
 });

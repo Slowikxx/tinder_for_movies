@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import MovieCard from './components/MovieCard';
 import { useMovies } from './providers/MoviesProvider';
+import { movies } from './data';
 
 function App() {
-	const { movies } = useMovies();
+	// const { movies } = useMovies();
 
 	const [currentMovieIndex, setCurrentMovieIndex] = useState<number>(0);
 

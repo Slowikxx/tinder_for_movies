@@ -34,6 +34,7 @@ const MovieCard = ({
 	const movieCardRef = useRef<HTMLDivElement>(null);
 
 	const handleInteractionStart = (x: number) => {
+		setIsHovered(true);
 		setIsDragging(true);
 		initialInteractionX.current = x;
 		startPositionX.current = positionX;
@@ -41,8 +42,8 @@ const MovieCard = ({
 
 	const handleInteractionMove = (x: number) => {
 		if (isDragging) {
-			const mouseDeltaX = x - initialInteractionX.current;
-			const newPositionX = startPositionX.current + mouseDeltaX;
+			const interactionDeltaX = x - initialInteractionX.current;
+			const newPositionX = startPositionX.current + interactionDeltaX;
 			if (newPositionX !== positionX) {
 				setPositionX(newPositionX);
 			}
@@ -51,12 +52,12 @@ const MovieCard = ({
 
 	const resetInteractionPosition = () => {
 		setIsDragging(false);
-
 		setPositionX(window.innerWidth / 2 - 175);
 	};
 
 	const handleInteractionEnd = () => {
 		setIsDragging(false);
+
 		if (
 			positionX <
 			currentWindowSize.width / 2 -
@@ -104,7 +105,10 @@ const MovieCard = ({
 				}}
 				onMouseMove={(e) => handleInteractionMove(e.clientX)}
 				onTouchStart={(e) => handleInteractionStart(e.touches[0].clientX)}
-				onTouchEnd={handleInteractionEnd}
+				onTouchEnd={() => {
+					setIsHovered(false);
+					handleInteractionEnd();
+				}}
 				onTouchMove={(e) => handleInteractionMove(e.touches[0].clientX)}
 				className="movie-card-background"
 				style={{

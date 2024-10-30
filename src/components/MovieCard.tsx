@@ -20,11 +20,12 @@ const MovieCard = ({
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const [isDragging, setIsDragging] = useState<boolean>(false);
 
-	const [cardRotationAngle, setCardRotationAngle] = useState<number>(0);
-	const [interactionPosition, setInteractionPosition] = useState<{
-		x: number;
-		y: number;
-	}>({ x: getWindowSize().width / 2, y: 0 });
+	const [positionX, setPositionX] = useState<number>(
+		window.innerWidth / 2 - 175
+	);
+	const startPositionX = useRef<number>(window.innerWidth / 2 - 175);
+	const initialInteractionX = useRef<number>(0);
+
 	const [currentWindowSize, setCurrentWindowSize] = useState<{
 		width: number;
 		height: number;
@@ -32,48 +33,53 @@ const MovieCard = ({
 
 	const movieCardRef = useRef<HTMLDivElement>(null);
 
-	const resetInteractionPosition = () => {
-		setIsDragging(false);
-		setInteractionPosition({ x: currentWindowSize.width / 2, y: 0 });
-		setCardRotationAngle(0);
+	const handleInteractionStart = (x: number) => {
+		setIsDragging(true);
+		initialInteractionX.current = x;
+		startPositionX.current = positionX;
 	};
 
-	const handleCardDrag = (x: number) => {
-		if (movieCardRef.current) {
-			const cardCenterX =
-				movieCardRef.current.getBoundingClientRect().left +
-				movieCardRef.current.getBoundingClientRect().width / 2;
-			const rotationAngle = (x - cardCenterX) / 10;
-			setCardRotationAngle(rotationAngle);
+	const handleInteractionMove = (x: number) => {
+		if (isDragging) {
+			const mouseDeltaX = x - initialInteractionX.current;
+			const newPositionX = startPositionX.current + mouseDeltaX;
+			if (newPositionX !== positionX) {
+				setPositionX(newPositionX);
+			}
 		}
 	};
 
+	const resetInteractionPosition = () => {
+		setIsDragging(false);
+
+		setPositionX(window.innerWidth / 2 - 175);
+	};
+
 	const handleInteractionEnd = () => {
-		if (interactionPosition.x < currentWindowSize.width / 2 - 100) {
+		setIsDragging(false);
+		if (
+			positionX <
+			currentWindowSize.width / 2 -
+				(movieCardRef.current?.clientWidth ?? 0) / 2 -
+				(currentWindowSize.width < 600 ? 25 : 100)
+		) {
 			onAccept();
-		} else if (interactionPosition.x > currentWindowSize.width / 2 + 100) {
+		} else if (
+			positionX >
+			currentWindowSize.width / 2 -
+				(movieCardRef.current?.clientWidth ?? 0) / 2 +
+				(currentWindowSize.width < 600 ? 25 : 100)
+		) {
 			onReject();
 		}
 
 		resetInteractionPosition();
 	};
 
-	const handleInteractionStart = (x: number, y: number) => {
-		setIsDragging(true);
-		setIsHovered(true);
-		setInteractionPosition({ x, y });
-	};
-
-	const hadleInteractionMove = (x: number, y: number) => {
-		if (isDragging) {
-			setInteractionPosition({ x, y });
-			handleCardDrag(x);
-		}
-	};
-
 	useEffect(() => {
 		const handleWindowResize = () => {
 			setCurrentWindowSize(getWindowSize());
+			resetInteractionPosition();
 		};
 		window.addEventListener('resize', handleWindowResize);
 
@@ -83,59 +89,65 @@ const MovieCard = ({
 	}, []);
 
 	return (
-		<div
-			data-testid={`movie-card-${id}`}
-			ref={movieCardRef}
-			onMouseEnter={() => setIsHovered(true)}
-			onMouseLeave={() => {
-				setIsHovered(false);
-				resetInteractionPosition();
-			}}
-			onMouseDown={(e) => handleInteractionStart(e.clientX, e.clientY)}
-			onMouseMove={(e) => hadleInteractionMove(e.clientX, e.clientY)}
-			onMouseUp={handleInteractionEnd}
-			onTouchStart={(e) =>
-				handleInteractionStart(e.touches[0].clientX, e.touches[0].clientY)
-			}
-			onTouchMove={(e) =>
-				hadleInteractionMove(e.touches[0].clientX, e.touches[0].clientY)
-			}
-			onTouchEnd={handleInteractionEnd}
-			className="movie-card-background"
-			style={{
-				backgroundImage: `url(${image})`,
-				cursor: isDragging ? 'grabbing' : 'grab',
-				transform: `rotate(${cardRotationAngle}deg)`,
-			}}
-		>
-			{isHovered && (
-				<div className="movie-info-wrapper">
-					<div className="movie-info">
-						<h2 className="movie-title">
-							{title} <span className="movie-rating">({rating}/10)</span>
-						</h2>
-						<p className="movie-summary">{summary}</p>
+		<div className="movie-card-wrapper">
+			<div
+				data-testid={`movie-card-${id}`}
+				ref={movieCardRef}
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseOver={() => setIsHovered(true)}
+				onMouseDown={(e) => handleInteractionStart(e.clientX)}
+				onMouseUp={handleInteractionEnd}
+				onMouseDownCapture={() => {}} // Allows the buttons to be clicked
+				onMouseLeave={() => {
+					setIsHovered(false);
+					handleInteractionEnd();
+				}}
+				onMouseMove={(e) => handleInteractionMove(e.clientX)}
+				onTouchStart={(e) => handleInteractionStart(e.touches[0].clientX)}
+				onTouchEnd={handleInteractionEnd}
+				onTouchMove={(e) => handleInteractionMove(e.touches[0].clientX)}
+				className="movie-card-background"
+				style={{
+					backgroundImage: `url(${image})`,
+					cursor: isDragging ? 'grabbing' : 'grab',
+					left: positionX,
+				}}
+			>
+				{isHovered && (
+					<div className="movie-info-wrapper">
+						<div className="movie-info">
+							<h2 className="movie-title">
+								{title} <span className="movie-rating">({rating}/10)</span>
+							</h2>
+							<p className="movie-summary">{summary}</p>
+						</div>
+						<div className="choice-wrapper">
+							<ChoiceButton
+								onClick={onAccept}
+								interactionPosition={
+									positionX <
+									currentWindowSize.width / 2 -
+										(movieCardRef.current?.clientWidth ?? 0) / 2 -
+										(currentWindowSize.width < 600 ? 25 : 100)
+								}
+								color="rgb(42, 233, 42)"
+								type="Accept"
+							/>
+							<ChoiceButton
+								onClick={onReject}
+								interactionPosition={
+									positionX >
+									currentWindowSize.width / 2 -
+										(movieCardRef.current?.clientWidth ?? 0) / 2 +
+										(currentWindowSize.width < 600 ? 25 : 100)
+								}
+								color="rgb(233, 42, 42)"
+								type="Reject"
+							/>
+						</div>
 					</div>
-					<div className="choice-wrapper">
-						<ChoiceButton
-							onClick={onAccept}
-							interactionPosition={
-								interactionPosition.x < currentWindowSize.width / 2 - 100
-							}
-							color="rgb(42, 233, 42)"
-							type="Accept"
-						/>
-						<ChoiceButton
-							onClick={onReject}
-							interactionPosition={
-								interactionPosition.x > currentWindowSize.width / 2 + 100
-							}
-							color="rgb(233, 42, 42)"
-							type="Reject"
-						/>
-					</div>
-				</div>
-			)}
+				)}
+			</div>
 		</div>
 	);
 };

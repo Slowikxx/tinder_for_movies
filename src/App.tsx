@@ -6,17 +6,22 @@ import { localMovies } from './data';
 function App() {
 	const { movies } = useMovies();
 
+	const currentMovies = movies.length > 0 ? movies : localMovies;
+
 	const [currentMovieIndex, setCurrentMovieIndex] = useState<number>(0);
 
 	const handleAccept = () => {
 		setCurrentMovieIndex((prev) => prev + 1);
-		setUsersDecisionInBackend(movies[currentMovieIndex].id, 'accept');
+		setUsersDecisionInBackend(currentMovies[currentMovieIndex].id, 'accept');
 	};
 
 	const handleReject = () => {
 		setCurrentMovieIndex((prev) => prev + 1);
-		setUsersDecisionInBackend(movies[currentMovieIndex].id, 'reject');
+		setUsersDecisionInBackend(currentMovies[currentMovieIndex].id, 'reject');
 	};
+
+	// this function will most likely throw an error because the backend is not hosted on any server yet
+	// this function will not throw an error if both backend and frontend are run locally
 
 	const setUsersDecisionInBackend = async (
 		movieId: string,
@@ -41,8 +46,6 @@ function App() {
 	};
 
 	const getCurrentMovie = () => {
-		const currentMovies = movies.length > 0 ? movies : localMovies;
-
 		return currentMovies[currentMovieIndex] || null;
 	};
 

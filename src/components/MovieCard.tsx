@@ -35,7 +35,6 @@ const MovieCard = ({
 
 	const handleInteractionStart = (x: number) => {
 		setIsDragging(true);
-		setIsHovered(true);
 		initialInteractionX.current = x;
 		startPositionX.current = positionX;
 	};
@@ -44,18 +43,20 @@ const MovieCard = ({
 		if (isDragging) {
 			const mouseDeltaX = x - initialInteractionX.current;
 			const newPositionX = startPositionX.current + mouseDeltaX;
-			setPositionX(newPositionX);
+			if (newPositionX !== positionX) {
+				setPositionX(newPositionX);
+			}
 		}
 	};
 
 	const resetInteractionPosition = () => {
 		setIsDragging(false);
+
 		setPositionX(window.innerWidth / 2 - 175);
 	};
 
 	const handleInteractionEnd = () => {
 		setIsDragging(false);
-		setIsHovered(false);
 		if (
 			positionX <
 			currentWindowSize.width / 2 -
@@ -93,9 +94,14 @@ const MovieCard = ({
 				data-testid={`movie-card-${id}`}
 				ref={movieCardRef}
 				onMouseEnter={() => setIsHovered(true)}
+				onMouseOver={() => setIsHovered(true)}
 				onMouseDown={(e) => handleInteractionStart(e.clientX)}
 				onMouseUp={handleInteractionEnd}
-				onMouseLeave={handleInteractionEnd}
+				onMouseDownCapture={() => {}} // Allows the buttons to be clicked
+				onMouseLeave={() => {
+					setIsHovered(false);
+					handleInteractionEnd();
+				}}
 				onMouseMove={(e) => handleInteractionMove(e.clientX)}
 				onTouchStart={(e) => handleInteractionStart(e.touches[0].clientX)}
 				onTouchEnd={handleInteractionEnd}
